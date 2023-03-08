@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import WeatherInfo from "./components/Info/WeatherInfo";
 import WeatherDetail from "./components/Detail/WeatherDetail";
@@ -6,17 +6,22 @@ import Search from "./components/Search/Serach";
  
 function App() {
   const [data, setData] = useState({})
-  const [location, setLocation] = useState('')
+  const [location, setLocation] = useState('lahore')
+  useEffect(() => {
+    getData()
+  }, [])
   const url =`https://api.openweathermap.org/data/2.5/weather?q=${location}&units=imperial&appid=090063c1b5204bb4f96dbffbfa2105c9`
 
   const searchLocation = (event) => {
     if (event.key === 'Enter') {
-      axios.get(url).then((response) => {
-        setData(response.data)
-        console.log(response.data)
-      })
-      setLocation('');
+      getData();
     } 
+  }
+  const getData = () => {
+    axios.get(url).then((response) => {
+      setData(response.data)
+    })
+    setLocation('')
   }
 
   return (
@@ -34,7 +39,7 @@ function App() {
       <div className="container">
         <WeatherInfo data={data} />
 
-        {data.name != undefined && 
+        {!data.name && 
           <WeatherDetail data= { data } />
         }
 
